@@ -1,14 +1,12 @@
 #!/bin/bash
 # https://github.com/nesro/time-tracker
 
-time_start=$(date +%s)
-time_start_string=$(date -d @$time_start +"%H:%M:%S")
-
 logfile=./time-tracker-log.txt
 time_sleep=1
 
-trap_action=
-trap_track=
+#-------------------------------------------------------------------------------
+
+time_start=$(date +%s)
 
 #-------------------------------------------------------------------------------
 
@@ -20,52 +18,51 @@ function time_diff {
 	min=$((((time_b - time_a) / 60 ) % 60))
 	hrs=$(((time_b - time_a) / 3600))
 	
-	#echo "$hrs:$min:$sec"
 	printf "%02d:%02d:%02d" $hrs $min $sec
-	
 }
 
-# usage: action track from to
+# usage: action track from [to]
 function log_message {
 
 	action=$1
 	track=$2
 	from=$3
-	to=$4
+	to=${4:-$(date +%s)}
 	
-	diff=$(($to - $from))
 	day=$(date +"%y.%m.%d")
-	str_from="from=$(date -d @$from +'%H:%M:%S')"
-	str_to="to=$(date -d @$to +'%H:%M:%S')"
-	str_diff="diff=$(time_diff $from $to)"
 	
-	echo $action $track $from $to $diff $day $str_from $str_to $str_diff \
-		>>$logfile
+	echo $action $track $from $to $day >>$logfile
 }
 
+# usage: action [year.month.day]
 function today_total {
 	
 	track=$1
 	day=${2:-$(date +"%y.%m.%d")}
 	
-	today_sum=$(egrep "$track|$day" $logfile | awk '{ sum += $5 } END { print sum }')
-	today_sum_string=$(date -u -d @$today_sum +'%H:%M:%S')
+	today_sum=$(egrep "$track|$day" $logfile | \
+		awk '{ s += $4 - $3 } END { print s }')
+	
+	if [[ -z $today_sum ]]; then
+		today_sum_string=none
+	else
+		today_sum_string=$(date -u -d @$today_sum +'%H:%M:%S')
+	fi
 }
 
 #-------------------------------------------------------------------------------
 
-trap control_c EXIT
-
-function control_c {
+trap trap_exit EXIT
+function trap_exit {
 
 	case $trap_action in
 	track)
-		time_end=$(date +%s)
-		log_message track $trap_track $time_start $time_end
+		log_message track $trap_track $time_start
 		echo -e "\nThis track has been logged!"
 		;;
 	*)
-		echo "Bad trap action: \"$trap_action\""
+		echo "Bad trap_exit action: \"$trap_action\""
+		exit 1
 		;;
 	esac
 	
@@ -73,8 +70,9 @@ function control_c {
 }
 
 function spin {
-
-	echo -e "tracking: $trap_track\ntoday: $today_sum_string\nsince: $time_start_string"
+	
+	time_start_string=$(date -d @$time_start +"%H:%M:%S")
+	echo -e "action: $trap_track\ntoday: $today_sum_string\nsince: $time_start_string"
 	while :; do
 		echo -ne "\relapsed: $(time_diff $time_start)"
 		sleep $time_sleep
