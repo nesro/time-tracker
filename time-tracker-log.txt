@@ -1,4 +1,1 @@
 #type action begin end diff year.month.day info
-track BI-SZZ 1400945404 1400945411 14.05.24
-track BI-SZZ 1400945413 1400945495 14.05.24
-track BI-SZZ 1400945497 1400945510 14.05.24
