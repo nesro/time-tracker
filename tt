@@ -18,10 +18,10 @@ function time_diff {
 	time_b=${2:-$(date +%s)}
 	sec=$(((time_b - time_a) % 60))
 	min=$((((time_b - time_a) / 60 ) % 60))
-	hrs=$(((time_b - time_a) / 360))
+	hrs=$(((time_b - time_a) / 3600))
 	
 	#echo "$hrs:$min:$sec"
-	printf "%02d:%02d:%02d" $hrs $min $sec 
+	printf "%02d:%02d:%02d %d" $hrs $min $sec $((time_b - time_a)) 
 	
 }
 
