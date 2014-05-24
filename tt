@@ -1,0 +1,104 @@
+#!/bin/bash
+# https://github.com/nesro/time-tracker
+
+time_start=$(date +%s)
+time_start_string=$(date -d @$time_start +"%H:%M:%S")
+
+logfile=./time-tracker-log.txt
+time_sleep=1
+
+trap_action=
+trap_track=
+
+#-------------------------------------------------------------------------------
+
+function this_day {
+	date +"%y.%m.%d"
+}
+
+
+# usage: from [to]
+function time_diff {
+	time_a=$1
+	time_b=${2:-$(date +%s)}
+	sec=$(((time_b - time_a) % 60))
+	min=$((((time_b - time_a) / 60 ) % 60))
+	hrs=$(((time_b - time_a) / 360))
+	
+	#echo "$hrs:$min:$sec"
+	printf "%02d:%02d:%02d" $hrs $min $sec 
+	
+}
+
+# usage: action track from to
+function log_message {
+
+	action=$1
+	track=$2
+	from=$3
+	to=$4
+	
+	diff=$(($to - $from))
+	day=$(date +"%y.%m.%d")
+	str_from="from=$(date -d @$from +'%H:%M:%S')"
+	str_to="to=$(date -d @$to +'%H:%M:%S')"
+	str_diff="diff=$(time_diff $from $to)"
+	
+	echo $action $track $from $to $diff $day $str_from $str_to $str_diff \
+		>>$logfile
+}
+
+function today_total {
+	
+	track=$1
+	day=${2:-$(date +"%y.%m.%d")}
+	
+	today_sum=$(egrep "$track|$day" $logfile | awk '{ sum += $5 } END { print sum }')
+	today_sum_string=$(date -u -d @$today_sum +'%H:%M:%S')
+}
+
+#-------------------------------------------------------------------------------
+
+trap control_c SIGINT EXIT
+
+function control_c {
+
+	case $trap_action in
+	track)
+		time_end=$(date +%s)
+		log_message track $trap_track $time_start $time_end
+		echo -e "\nThis track has been logged!"
+		;;
+	*)
+		echo "Bad trap action: \"$trap_action\""
+		;;
+	esac
+	
+	exit 0
+}
+
+function spin {
+
+	echo -e "tracking: $trap_track\ntoday: $today_sum_string\nsince: $time_start_string"
+	while :; do
+		echo -ne "\relapsed: $(time_diff $time_start)"
+		sleep $time_sleep
+	done
+}
+
+#-------------------------------------------------------------------------------
+
+for i in "$@"; do
+	case $i in
+	-w) shift
+		trap_action=track
+		trap_track=$1
+		today_total $trap_track
+		spin
+		shift
+		;;
+    *)
+    	;;
+	esac
+done
+
