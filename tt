@@ -21,7 +21,7 @@ function time_diff {
 	hrs=$(((time_b - time_a) / 3600))
 	
 	#echo "$hrs:$min:$sec"
-	printf "%02d:%02d:%02d %d" $hrs $min $sec $((time_b - time_a)) 
+	printf "%02d:%02d:%02d" $hrs $min $sec
 	
 }
 
