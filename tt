@@ -2,7 +2,7 @@
 # https://github.com/nesro/time-tracker
 
 time_start=$(date +%s)
-time_start_string=$(date -u -d @$time_start +"%H:%M:%S")
+time_start_string=$(date -d @$time_start +"%H:%M:%S")
 
 logfile=./time-tracker-log.txt
 time_sleep=1
@@ -11,11 +11,6 @@ trap_action=
 trap_track=
 
 #-------------------------------------------------------------------------------
-
-function this_day {
-	date +"%y.%m.%d"
-}
-
 
 # usage: from [to]
 function time_diff {
@@ -41,7 +36,7 @@ function log_message {
 	diff=$(($to - $from))
 	day=$(date +"%y.%m.%d")
 	str_from="from=$(date -d @$from +'%H:%M:%S')"
-	str_to="to=$(date -u -d @$to +'%H:%M:%S')"
+	str_to="to=$(date -d @$to +'%H:%M:%S')"
 	str_diff="diff=$(time_diff $from $to)"
 	
 	echo $action $track $from $to $diff $day $str_from $str_to $str_diff \
