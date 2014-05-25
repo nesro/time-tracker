@@ -40,7 +40,7 @@ function today_total {
 	track=$1
 	day=${2:-$(date +"%y.%m.%d")}
 	
-	today_sum=$(egrep "$track|$day" $logfile | \
+	today_sum=$(grep "$track" $logfile | grep "$day" | \
 		awk '{ s += $4 - $3 } END { print s }')
 	
 	if [[ -z $today_sum ]]; then
