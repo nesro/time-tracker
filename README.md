@@ -8,7 +8,7 @@ Usage:
 
 and when finished, close the terminal or Ctrl+C
 
-version 1.0.0
+version 1.1.0
 
 Example:
 
@@ -26,3 +26,5 @@ Example:
 	elapsed: 00:01:21^C
 	This track has been logged!
 
+Changelog: 1.1.0 - added -v for verbose information.
+without this parameter just print time
