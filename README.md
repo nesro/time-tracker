@@ -8,23 +8,18 @@ Usage:
 
 and when finished, close the terminal or Ctrl+C
 
-version 1.1.0
+version 1.2.0
 
 Example:
 
-	n@t:~/Dropbox/time-tracker$ ./tt -w BI-SZZ
+	n@t:~/Dropbox/time-tracker$ ./tt -v -g 08:00:00 -w BI-SZZ
 	action: BI-SZZ
-	today: none
-	since: 17:30:04
-	elapsed: 00:00:07^C
+	today: 03:20:41
+	since: 18:50:19
+	elapsed: 00:00:02 total: 03:20:43 goal in: 04:39:17^C
 	This track has been logged!
 
-	n@t:~/Dropbox/time-tracker$ ./tt -w BI-SZZ
-	action: BI-SZZ
-	today: 00:00:07
-	since: 17:30:13
-	elapsed: 00:01:21^C
-	This track has been logged!
-
-Changelog: 1.1.0 - added -v for verbose information.
+- 1.1.0 changelog: added -v for verbose information.
 without this parameter just print time
+
+- 1.2.0 changelog: added -g HH:MM:SS to add time goal
