@@ -46,6 +46,7 @@ function today_total {
 	
 	if [[ -z $today_sum ]]; then
 		today_sum_string=none
+		today_sum=0
 	else
 		today_sum_string=$(date -u -d @$today_sum +'%H:%M:%S')
 	fi
